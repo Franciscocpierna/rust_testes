@@ -1,4 +1,7 @@
+extern crate native_windows_gui as nwg;
+extern crate native_windows_derive as nwd;
 
+use nwg::NativeUi;
 use std::str::FromStr;
 
 fn numero_por_extenso(n: u64) -> String {
@@ -89,10 +92,40 @@ fn numero_por_extenso_completo(valor: f64) -> String {
     resultado
 }
 
+#[derive(Default, nwd::NwgUi)]
+pub struct App {
+    #[nwg_control(size: (300, 150), position: (300, 300), title: "Conversor de Valores")]
+    #[nwg_events(OnWindowClose: [nwg::stop_thread_dispatch()])]
+    window: nwg::Window,
+
+    #[nwg_control(size: (280, 25), position: (10, 10), placeholder_text: Some("Digite o valor"))]
+    input: nwg::TextInput,
+
+    #[nwg_control(size: (280, 25), position: (10, 50), text: "Converter")]
+    #[nwg_events(OnButtonClick: [App::converter_valor])]
+    button: nwg::Button,
+
+    #[nwg_control(size: (280, 25), position: (10, 90), readonly: true)]
+    output: nwg::TextInput,
+}
+
+impl App {
+    fn converter_valor(&self) {
+        let valor_str = self.input.text().replace(",", ".");
+        match f64::from_str(&valor_str) {
+            Ok(valor) => {
+                let valor_extenso = numero_por_extenso_completo(valor);
+                self.output.set_text(&valor_extenso);
+            }
+            Err(_) => {
+                self.output.set_text("Valor inválido");
+            }
+        }
+    }
+}
+
 fn main() {
-    let valor_str = "1234,56"; // Exemplo de valor com vírgula
-    let valor_str = valor_str.replace(",", ".");
-    let valor = f64::from_str(&valor_str).expect("Valor inválido");
-    let valor_extenso = numero_por_extenso_completo(valor);
-    println!("Valor por extenso: {}", valor_extenso);
+    nwg::init().expect("Falha ao inicializar o Native Windows GUI");
+    let _app = App::build_ui(Default::default()).expect("Falha ao construir a UI");
+    nwg::dispatch_thread_events();
 }
