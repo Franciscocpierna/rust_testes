@@ -1,8 +1,8 @@
-extern crate native_windows_gui as nwg;
-extern crate native_windows_derive as nwd;
+extern crate native_windows_gui as nwg;// Importa a biblioteca nwg
+extern crate native_windows_derive as nwd;// Importa a biblioteca nwd
 
-use nwg::NativeUi;
-use std::str::FromStr;
+use nwg::NativeUi; // Importa o trait NativeUi
+use std::str::FromStr; // Importa o trait FromStr
 
 fn numero_por_extenso(n: u64) -> String {
     let unidades = ["", "um", "dois", "três", "quatro", "cinco", "seis", "sete", "oito", "nove"];
@@ -94,30 +94,40 @@ fn numero_por_extenso_completo(valor: f64) -> String {
 
 #[derive(Default, nwd::NwgUi)]
 pub struct App {
-    #[nwg_control(size: (300, 150), position: (300, 300), title: "Conversor de Valores")]
-    #[nwg_events(OnWindowClose: [nwg::stop_thread_dispatch()])]
-    window: nwg::Window,
+   // Janela principal do aplicativo
+   #[nwg_control(size: (300, 150), position: (300, 300), title: "Conversor de Valores")]
+   #[nwg_events(OnWindowClose: [nwg::stop_thread_dispatch()])]
+   window: nwg::Window,
 
-    #[nwg_control(size: (280, 25), position: (10, 10), placeholder_text: Some("Digite o valor"))]
-    input: nwg::TextInput,
+   // Campo de entrada de texto para o usuário digitar o valor
+   #[nwg_control(size: (280, 25), position: (10, 10), placeholder_text: Some("Digite o valor"))]
+   input: nwg::TextInput,// Campo de entrada de texto para o usuário digitar o valor
 
-    #[nwg_control(size: (280, 25), position: (10, 50), text: "Converter")]
-    #[nwg_events(OnButtonClick: [App::converter_valor])]
-    button: nwg::Button,
+   // Botão para acionar a conversão do valor
+   #[nwg_control(size: (280, 25), position: (10, 50), text: "Converter")]
+   #[nwg_events(OnButtonClick: [App::converter_valor])]
+   button: nwg::Button,// Botão para acionar a conversão do valor
 
-    #[nwg_control(size: (280, 25), position: (10, 90), readonly: true)]
-    output: nwg::TextInput,
+   // Campo de saída de texto para exibir o valor por extenso
+   #[nwg_control(size: (280, 25), position: (10, 90), readonly: true)]
+   output: nwg::TextInput,// Campo de saída de texto para exibir o valor por extenso
 }
 
 impl App {
+    // Função que é chamada quando o botão "Converter" é clicado
     fn converter_valor(&self) {
+        // Obtém o texto do campo de entrada e substitui a vírgula por ponto
         let valor_str = self.input.text().replace(",", ".");
+        // Tenta converter o texto para um valor de ponto flutuante
         match f64::from_str(&valor_str) {
             Ok(valor) => {
+                // Se a conversão for bem-sucedida, converte o valor para sua representação por extenso
                 let valor_extenso = numero_por_extenso_completo(valor);
+                // Define o texto do campo de saída com o valor por extenso
                 self.output.set_text(&valor_extenso);
             }
             Err(_) => {
+                // Se a conversão falhar, exibe uma mensagem de erro no campo de saída
                 self.output.set_text("Valor inválido");
             }
         }
@@ -125,7 +135,10 @@ impl App {
 }
 
 fn main() {
+    // Inicializa a biblioteca Native Windows GUI
     nwg::init().expect("Falha ao inicializar o Native Windows GUI");
+    // Constrói a interface gráfica do aplicativo
     let _app = App::build_ui(Default::default()).expect("Falha ao construir a UI");
+    // Inicia o loop de eventos do aplicativo
     nwg::dispatch_thread_events();
 }
