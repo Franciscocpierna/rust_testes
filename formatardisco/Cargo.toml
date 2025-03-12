@@ -1,0 +1,9 @@
+[package]
+name = "formatardisco"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+native-windows-gui = "1.0"
+sysinfo = "0.21.0"
+ntapi = "0.3.6"

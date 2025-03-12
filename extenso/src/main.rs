@@ -65,7 +65,7 @@ fn numero_por_extenso(n: u64) -> String {
     if n > 0 {
         partes.push(unidades[n as usize].to_string());
     }
-
+   // dbg!(&partes); // Debug
     partes.join(" ")
 }
 
