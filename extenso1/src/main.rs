@@ -12,7 +12,7 @@ use std::panic; // Importa o módulo panic
 use std::io::Write; // Importa o módulo Write
 
 // Função para gerar um PDF com o texto fornecido
-fn gerar_pdf(texto: &str, caminho: &str) {
+fn gerar_pdf(texto: &str, caminho: &str) { 
     let (doc, page1, layer1) = PdfDocument::new("Documento", Mm(210.0), Mm(297.0), "Layer 1"); // Cria um novo documento PDF
     let current_layer = doc.get_page(page1).get_layer(layer1); // Obtém a camada atual do documento
 
